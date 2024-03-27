@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import software.amazon.awssdk.services.sqs.model.Message;
-
+//check
 public class App {
     final static AWS aws = AWS.getInstance();
     private static String localApplicationId;
