@@ -35,7 +35,6 @@ public class Manager {
         id2LocalAppData = new HashMap<String, LocalAppData>();
         workersInstances = new ArrayList<String>();
             try{
-            //final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
             List<Message> messagesFromApps = new ArrayList<Message>();
             List<Message> messagesFromWorkers = new ArrayList<Message>();
             while(true){
@@ -123,9 +122,8 @@ public class Manager {
                                     System.out.println("debug- size of ratio is "+ratio);
                                     double double_numOfWorkersNeeded = (double) poolSize / ratio;
                                     int numOfWorkersNeeded =  (int) Math.ceil(double_numOfWorkersNeeded);
-                                    System.out.println("debug- size of numOfWorkersNeeded is "+numOfWorkersNeeded);
                                     synchronized(lock){ //sync workers creation
-                                        Thread.sleep(5000);//to avoid situation when currentAmountOfWorkers is not updated
+                                        Thread.sleep(5000);
                                         currentAmountOfWorkers = aws.getActiveWorkerCount();
                                         System.out.println("debug- size of currentAmountOfWorkers is "+currentAmountOfWorkers);
                                         int workersToCreate = Math.max(0 , numOfWorkersNeeded - currentAmountOfWorkers);
@@ -175,7 +173,7 @@ public class Manager {
                         executor.execute(task);
                 }
             }
-                if(!messagesFromWorkers.isEmpty()){ //handle worekrs messages
+                if(!messagesFromWorkers.isEmpty()){ //handle messages from workers
                     Message curr_message_from_worker = messagesFromWorkers.get(0);
                     aws.DeleteOneMessageFromQueue(queues.get("workers-manager-queue"), curr_message_from_worker.receiptHandle());
                     aws.sendMessageToQueue(queues.get("workers-manager-threads-queue"), curr_message_from_worker.body());
@@ -215,8 +213,6 @@ public class Manager {
                     executor.execute(task);
                 }
             }
-        
-        
         }
     catch(Exception e){
         e.printStackTrace();
@@ -277,10 +273,8 @@ public class Manager {
     }
 
     private static boolean _Terminate(){
-        System.out.println("[debug] - i should terminate 1 bro");
         if(id2LocalAppData.isEmpty()){
             try{
-                System.out.println("[debug] - i should terminate 2 bro");
                 for(String instance : workersInstances){ //terminate all workers
                     aws.terminateEC2(instance);
                 }
@@ -292,7 +286,6 @@ public class Manager {
                 aws.deleteQueue(queues.get("workers-manager-threads-queue"));
                 aws.deleteQueue(queues.get("manager-workers-threads-queue"));
                 executor.shutdown();
-                //aws.terminateEC2(managerId);
                 aws.close();
                 return true;
             }
