@@ -58,7 +58,7 @@ public class AWS {
 
     public static Region region1 = Region.US_EAST_1;
     public static Region region2 = Region.US_WEST_2;
-    public static String amiId = "ami-00e95a9222311e8ed";
+    public static String amiId = "";
 
     private static final AWS instance = new AWS();
 
@@ -161,7 +161,6 @@ public class AWS {
         }
     }
 
-
     // SQS
     public String createQueue(String queueName) {
         try {
@@ -218,8 +217,7 @@ public class AWS {
             sqs.sendMessage(send_msg_request);
         } catch (SqsException e) {
             System.out.println(e.getMessage());
-        }
-  
+        }  
   }
 
   public List<Message> receiveMessagesFromQueue(String queue_url){
@@ -232,9 +230,7 @@ public class AWS {
     } catch (SqsException e) {
         System.out.println(e.getMessage());
         throw e;
-        //return null;
-    }
-  
+        }
     }
 
     
@@ -254,9 +250,7 @@ public class AWS {
     } catch (SqsException e) {
         System.out.println(e.getMessage());
         throw e;
-        //return null;
-    }
-  
+        }
     }
 
     public void DeleteMessagesFromQueue(String queueUrl) {
@@ -270,7 +264,6 @@ public class AWS {
                     .receiptHandle(m.receiptHandle())
                     .build();
                 sqs.deleteMessage(deleteRequest);
-                System.out.println("i deleted bro");
             }
     }
 
@@ -288,9 +281,7 @@ public class AWS {
     }
             
     
-
 //EC2
-
     public boolean isManagerActive(){
     DescribeInstancesRequest request = DescribeInstancesRequest.builder().build();
     DescribeInstancesResponse response = ec2.describeInstances(request);
@@ -372,13 +363,11 @@ public class AWS {
         return counter;
     }  
 
-
     //close
     public void close() {
         s3.close();
         sqs.close();
         ec2.close();
     }
-
 
 }
