@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import software.amazon.awssdk.services.sqs.model.Message;
-//check
 public class App {
     final static AWS aws = AWS.getInstance();
     private static String localApplicationId;
@@ -20,7 +19,9 @@ public class App {
                                             "aws s3 cp s3://pre-loaded-jars/Manager.jar Manager.jar\n" +
                                             "java -jar Manager.jar >> output.log 2>&1\n" +
                                             "sudo shutdown -h now\n";
-    public static void main(String[] args) {// args = [inFilePath, outFilePath, tasksPerWorker, -t (terminate, optional)]
+
+    // args = [inFilePath, outFilePath, tasksPerWorker, -t (optional)]
+    public static void main(String[] args) {
             System.out.println("[DEBUG] local app started");
         try {
             if(args.length < 3){
@@ -36,8 +37,8 @@ public class App {
                 InQueueUrl = aws.createQueue("manager-localapps-queue");
             //upload jars to s3
             aws.createBucketIfNotExists("pre-loaded-jars");
-            aws.uploadFile("pre-loaded-jars", "Manager.jar", "C:\\Users\\Ben\\Downloads\\Assignment 1\\Assignment 1\\Local App\\target\\Manager.jar");
-            aws.uploadFile("pre-loaded-jars", "Worker.jar", "C:\\Users\\Ben\\Downloads\\Assignment 1\\Assignment 1\\Local App\\target\\Worker.jar");
+            aws.uploadFile("pre-loaded-jars", "Manager.jar", "");
+            aws.uploadFile("pre-loaded-jars", "Worker.jar", "");
             boolean terminate_mode = false;
             Integer ratio;
             String output_file_name;
@@ -57,7 +58,7 @@ public class App {
             }
             int file_num = 1;
             for(int i=0; args[i] != output_file_name ; i++){ //uploading input files to s3
-                aws.uploadFile(OutBucketName, localApplicationId + "#" + file_num, "C:\\Users\\Ben\\Downloads\\aws files עבודה 1\\" + args[i]);
+                aws.uploadFile(OutBucketName, localApplicationId + "#" + file_num, "" + args[i]);
                 aws.sendMessageToQueue(OutQueueUrl, localApplicationId + " " + file_num + " " + ratio + " " + numOfFiles); // sending messages to the queue, stating the location of the files on S3
                 file_num++;
             }
@@ -88,7 +89,7 @@ public class App {
                 }
             }
            
-            String output_path ="C:\\Users\\Ben\\Downloads\\aws files עבודה 1\\";
+            String output_path ="";
             BufferedReader output = aws.downloadFile(InBucketName, localApplicationId);
             convertTextToColoredHtml(output, output_path + output_file_name +".html");
             if(terminate_mode){
@@ -137,7 +138,7 @@ public class App {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }//source: chatGpt
+    }
 
     private static String getSentimentColor(int sentiment) {
         if (sentiment == 1) {
@@ -153,7 +154,7 @@ public class App {
         } else {
             return "black";
         }
-    }//source: chatGpt
+    }
 
 }
 
