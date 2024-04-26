@@ -16,13 +16,13 @@ public class LocalAppData {
         file2ProccessedReviews = new HashMap<String, List<String>>();
     }
 
-    public synchronized void updateFile2NumOfTasks(String file, Integer numOfTasks) //syncronized?
+    public synchronized void updateFile2NumOfTasks(String file, Integer numOfTasks) 
     {
         file2NumOfTasks.put(file, numOfTasks);
         file2ProccessedReviews.put(file, new ArrayList<String>());
     }
 
-    public synchronized void addProccessedReviews(String file, String reviews) //syncronized?
+    public synchronized void addProccessedReviews(String file, String reviews) 
     {
         file2ProccessedReviews.get(file).add(reviews);
     }
